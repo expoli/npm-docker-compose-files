@@ -1,0 +1,17 @@
+services: 
+  qbittorrent:
+    image: ghcr.io/linuxserver/qbittorrent
+    container_name: qbittorrent
+    expose:
+      - 8888
+    environment:
+      - PUID=1000
+      - PGID=1001
+      - TZ=Aisa/Shanghai
+      - WEBUI_PORT=8888
+    restart: always
+
+    volumes:
+      - ./data/config:/config
+      - /path/to/your/download/dir:/downloads
+    network_mode: host

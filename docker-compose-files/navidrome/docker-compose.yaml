@@ -1,0 +1,41 @@
+services:
+  navidrome:
+    image: deluan/navidrome:latest
+    container_name: navidrome
+    user: 1000:1001 # should be owner of volumes
+    expose:
+      - 4533
+    restart: always
+    environment:
+      # Optional: put your config options customization here. Examples:
+      ND_SCANSCHEDULE: 1h
+      ND_LOGLEVEL: info  
+      ND_SESSIONTIMEOUT: 24h
+      ND_BASEURL: ""
+    volumes:
+      - "./data:/data"
+      - "/path/to/your/Music/dir:/music:ro"
+    networks:
+      - proxy
+
+  feishin:
+    container_name: feishin
+    image: 'ghcr.io/jeffvli/feishin:latest'
+    environment:
+      - SERVER_NAME=navidrome # pre defined server name
+      - SERVER_LOCK=true # When true AND name/type/url are set, only username/password can be toggled
+      - SERVER_TYPE=navidrome # navidrome also works
+      - SERVER_URL="http://navidrome:4533" # http://address:port
+      - PUID=1000
+      - PGID=1001
+      - UMASK=002
+      - TZ=Asia/Shanghai
+    expose:
+      - 9180
+    restart: always
+    networks:
+      - proxy
+networks:
+  proxy:
+    external: true
+    name: trim-default
